@@ -4,6 +4,7 @@ import resend
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+
 app = FastAPI()
 resend.api_key = os.environ["RESEND_API_KEY"]
 
