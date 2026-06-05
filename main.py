@@ -42,7 +42,7 @@ async def webhook(request: Request):
         print("Fields:", fields)
         
         first_name = fields.get("First name", "bạn")
-        email = fields.get("Bạn muốn nhận tài liệu vào email nào", "")
+        email = fields.get("Email", "")
         
         print(f"Name: {first_name}, Email: {email}")
         
