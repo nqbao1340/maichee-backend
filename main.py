@@ -1,5 +1,6 @@
 import smtplib
 import os
+import json
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from fastapi import FastAPI, Request
@@ -21,11 +22,9 @@ Heey {first_name}! 👋
 
 Cảm ơn bạn đã đăng ký nhận bản tin Babychino!
 
-Bản tin PDF cá nhân hóa của bạn đang được chuẩn bị và sẽ sớm gửi đến.
-
 Babychino 🤰
     """
-    msg.attach(MIMEText(body, "plain"))
+    msg.attach(MIMEText(body, "plain", "utf-8"))
     
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
         server.login(gmail_user, gmail_password)
@@ -34,17 +33,28 @@ Babychino 🤰
 @app.post("/webhook")
 async def webhook(request: Request):
     data = await request.json()
+    print("=== TALLY DATA ===")
+    print(json.dumps(data, ensure_ascii=False, indent=2))
+    print("==================")
     
     try:
         fields = {f["label"]: f["value"] for f in data["data"]["fields"]}
+        print("Fields:", fields)
+        
         first_name = fields.get("First name", "bạn")
         email = fields.get("Bạn muốn nhận tài liệu vào email nào", "")
         
+        print(f"Name: {first_name}, Email: {email}")
+        
         if email:
             send_email(email, first_name)
+            print("Email sent!")
             
         return JSONResponse({"status": "ok"})
     except Exception as e:
+        print(f"ERROR: {e}")
+        import traceback
+        traceback.print_exc()
         return JSONResponse({"status": "error", "detail": str(e)}, status_code=500)
 
 @app.get("/")
