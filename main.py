@@ -6,7 +6,8 @@ from fastapi.responses import JSONResponse
 
 
 app = FastAPI()
-resend.api_key = os.environ["RESEND_API_KEY"]
+resend.api_key = os.environ.get("RESEND_API_KEY", "")
+print(f"API Key loaded: {resend.api_key[:10]}...")
 
 def send_email(to_email, first_name):
     resend.Emails.send({
